@@ -1,0 +1,52 @@
+Circuit Connections:
+Input/Output LEDs
+LED A (Input A):
+
+Anode (long leg) to Pin 3 on Arduino
+Cathode (short leg) through a 220Ω resistor to GND
+LED B (Input B):
+
+Anode to Pin 4
+Cathode through a 220Ω resistor to GND
+LED Result (Output):
+
+Anode to Pin 5
+Cathode through a 220Ω resistor to GND
+Logic Gate Selection LEDs
+AND Gate LED:
+
+Anode to Pin 6
+Cathode through a 220Ω resistor to GND
+OR Gate LED:
+
+Anode to Pin 7
+Cathode through a 220Ω resistor to GND
+NAND Gate LED:
+
+Anode to Pin 8
+Cathode through a 220Ω resistor to GND
+NOR Gate LED:
+
+Anode to Pin 9
+Cathode through a 220Ω resistor to GND
+XOR Gate LED:
+
+Anode to Pin 10
+Cathode through a 220Ω resistor to GND
+XNOR Gate LED:
+
+Anode to Pin 11
+Cathode through a 220Ω resistor to GND
+Button Connections
+Button A (Input A):
+
+One terminal to Pin 1
+The other terminal to GND
+Button B (Input B):
+
+One terminal to Pin 2
+The other terminal to GND
+Button Select (For Gate Selection):
+
+One terminal to Pin 12
+The other terminal to GND
