@@ -1,0 +1,114 @@
+#include <LiquidCrystal.h>
+
+// Initialize the LCD
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+
+// Define pin numbers
+const int button1Pin = 1;          // Button 1 - Input A
+const int button2Pin = 2;          // Button 2 - Input B
+const int buttonSelectPin = 12;    // Button 3 - Logic Gate Selector
+const int ledInputAPin = 3;        // LED A for Input A
+const int ledInputBPin = 4;        // LED B for Input B
+const int ledOutputPin = 5;        // LED for Output Result
+
+// Gate selection LEDs
+const int ledGatePins[6] = {6, 7, 8, 9, 10, 11}; // AND, OR, NAND, NOR, XOR, XNOR LEDs
+
+// State variables
+bool A;
+bool B;
+bool buttonSelectState;
+int gateSelection = 0;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 300; // Debounce time in milliseconds
+
+void setup() {
+  // Set up serial communication for debugging
+  Serial.begin(9600);
+
+  // Set pin modes
+  pinMode(button1Pin, INPUT_PULLUP);
+  pinMode(button2Pin, INPUT_PULLUP);
+  pinMode(buttonSelectPin, INPUT_PULLUP);
+  pinMode(ledInputAPin, OUTPUT);
+  pinMode(ledInputBPin, OUTPUT);
+  pinMode(ledOutputPin, OUTPUT);
+
+  // Set gate selection LED pins to OUTPUT
+  for (int i = 0; i < 6; i++) {
+    pinMode(ledGatePins[i], OUTPUT);
+  }
+
+  // Initialize LCD
+  lcd.begin(16, 2);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Logic Gate Sim");
+  delay(1000);
+  lcd.clear();
+}
+
+void loop() {
+  // Read button states
+  A = !digitalRead(button1Pin);
+  B = !digitalRead(button2Pin);
+  buttonSelectState = !digitalRead(buttonSelectPin);
+
+  // Display inputs on LEDs
+  digitalWrite(ledInputAPin, A ? HIGH : LOW);
+  digitalWrite(ledInputBPin, B ? HIGH : LOW);
+
+  // Check buttonSelectPin with debounce to change gates
+  if (buttonSelectState && (millis() - lastDebounceTime > debounceDelay)) {
+    gateSelection = (gateSelection + 1) % 6; // Cycle through gates
+    lastDebounceTime = millis();
+  }
+
+  // Display gate selection on LCD and corresponding LED
+  lcd.clear();
+  for (int i = 0; i < 6; i++) {
+    digitalWrite(ledGatePins[i], LOW); // Turn off all gate LEDs
+  }
+  digitalWrite(ledGatePins[gateSelection], HIGH); // Turn on current gate LED
+  
+  // Logic gate operations based on the selected gate
+  switch (gateSelection) {
+    case 0: // AND Gate
+      lcd.setCursor(0, 0);
+      lcd.print("AND Gate");
+      digitalWrite(ledOutputPin, (A && B) ? HIGH : LOW);
+      break;
+
+    case 1: // OR Gate
+      lcd.setCursor(0, 0);
+      lcd.print("OR Gate");
+      digitalWrite(ledOutputPin, (A || B) ? HIGH : LOW);
+      break;
+
+    case 2: // NAND Gate
+      lcd.setCursor(0, 0);
+      lcd.print("NAND Gate");
+      digitalWrite(ledOutputPin, !(A && B) ? HIGH : LOW);
+      break;
+
+    case 3: // NOR Gate
+      lcd.setCursor(0, 0);
+      lcd.print("NOR Gate");
+      digitalWrite(ledOutputPin, !(A || B) ? HIGH : LOW);
+      break;
+
+    case 4: // XOR Gate
+      lcd.setCursor(0, 0);
+      lcd.print("XOR Gate");
+      digitalWrite(ledOutputPin, (A != B) ? HIGH : LOW);
+      break;
+
+    case 5: // XNOR Gate
+      lcd.setCursor(0, 0);
+      lcd.print("XNOR Gate");
+      digitalWrite(ledOutputPin, (A == B) ? HIGH : LOW);
+      break;
+  }
+
+  delay(100); // Short delay for stable display updates
+}
